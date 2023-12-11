@@ -27,7 +27,7 @@ python -m streamlit run SIP_machine.py
 
 2. Dont interact with the application (e.g. selecting SIPs, Sidebar, uploading or deleting images) while SIP-computations are running. It will refresh the application and all progress will be lost.
 
-3. Multithreading is not supported. To calculate SIPs for very large datasets, you may want to consider running multiple instances of the application.
+3. Multithreading is not supported as it would limit platform independence. To calculate SIPs for very large datasets, you may want to consider splitting the data and running multiple instances of the application.
 
 # Privacy and security
 All calculations and data transfers take place on the local computer. The browser is only used as an interface. No data is uploaded to the Internet.
