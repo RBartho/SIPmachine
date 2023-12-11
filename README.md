@@ -4,6 +4,9 @@ This project contains Python scripts to run a streamlit application in your brow
 
 # Installation instructions
 
+
+[a relative link](docs/InstallationInstructions_Linux.md)
+
 1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button.)
 
 2. If you do not already have Anaconda or Miniconda installed, download and install Anaconda for your operating system (Windows, Mac, Linux):
