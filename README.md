@@ -4,7 +4,7 @@ This project contains Python scripts to run a streamlit application in your brow
 
 # Installation instructions
 
-[Installation Linux](https://github.com/RBartho/SIPmachine/edit/master/docs/InstallationInstructions_Linux.md)
+[Installation Linux](docs/InstallationInstructions_Linux.md)
 
 
 1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button.)
