@@ -4,8 +4,8 @@ This project contains Python scripts to run a streamlit application in your brow
 
 # Installation instructions
 [Linux Installation](docs/InstallationInstructions_Linux.md) \
-[Linux Installation](docs/InstallationInstructions_MacOS.md)  \
-[Linux Installation](docs/InstallationInstructions_Windows.md) 
+[MacOS Installation](docs/InstallationInstructions_MacOS.md)  \
+[Windows Installation](docs/InstallationInstructions_Windows.md) 
 
 # Starting the application (after installation)
 
