@@ -270,9 +270,19 @@ if app_mode == 'SIP Calculation':
         with col2:
             levels = int(st.text_input('Number of levels:', value="3",  help=None,  label_visibility="visible"))
             re = int(st.text_input('Scale images to Number of Pixels (-1 = no scaling):', value="100000",  help=None,  label_visibility="visible"))
-            weigths = int(st.text_input('Set weights for levels:', value='1',  help=None,  label_visibility="visible"))
+            
+            col2a, col2b, col2c = st.columns(3)
+            
+            with col2a:
+                weigths1 = int(st.text_input('Weights for level1:', value=1,  help=None,  label_visibility="visible"))
+            with col2b: 
+                weigths2 = int(st.text_input('Weights for level2:', value=1,  help=None,  label_visibility="visible"))
+            with col2c:
+                weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
             
             
+        
+        
         
     
     run = st.button('run calculation' )
@@ -533,12 +543,11 @@ if app_mode == 'SIP Calculation':
                                         result_txt = result_txt + str(custom_round(self_sim)) + ','
                                     elif key == 'Complexity':
                                         result_txt = result_txt + str(custom_round(complexity)) + ','
-                                        print('#######!!!!!!!!!!!#######', complexity)
                                     elif key == 'Anisotropy':
                                         result_txt = result_txt + str(custom_round(anisotropy)) + ','
                                                  
                                 else:
-                                    self_sim, complexity, anisotropy = SIP.PHOGfromImage(img_rgb, section=section, bins=bins, angle=angle, levels=levels, re=re, sesfweight=[1,1,1] )
+                                    self_sim, complexity, anisotropy = SIP.PHOGfromImage(img_rgb, section=section, bins=bins, angle=angle, levels=levels, re=re, sesfweight=[weigths1,weigths2,weigths3] )
                                     if key == 'PHOG-based':
                                         result_txt = result_txt + str(custom_round(self_sim)) + ','
                                     elif key == 'Complexity':
