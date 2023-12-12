@@ -39,8 +39,7 @@ python -m streamlit run SIP_machine.py
 ```
 
 
-
 Your default browser should open the application on your local machine. It should look like this: 
-![Screenshot](https://github.com/RBartho/SIPmachine/master/toolbox_screenshot.png)
+![Screenshot](https://github.com/RBartho/SIPmachine/tree/master/toolbox_screenshot.png)
 The browser is only used as an interface. No data is uploaded to the Internet.
 
