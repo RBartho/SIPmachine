@@ -1,10 +1,4 @@
-# Installation instructions
-
-1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button.)
-
-2. If you do not already have Anaconda or Miniconda installed, download and install Anaconda for your operating system (Windows, Mac, Linux):
-
-	https://www.anaconda.com/download
+# Installation instructions Linux
 
 3. Open a terminal on your system. If you do not know how to do this on your system, google it :-).
 
