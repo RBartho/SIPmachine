@@ -12,17 +12,23 @@ import sip_machine_funct as SIP
 
 ###################### TODO's
 
+# image resize option?
+
 # add parameters for Slope
 
-# add level weights PHOG
-
 # Gitlab automatic Code Tests
+
 
 # überprüfen, was "der Chinese" alles in seiner Toolbox hatte
 
 # drei Slope version zusammenbringen/zusammenbringbar?
 
 # Minifehler in Code kommentieren, Richtige Version auskommentieren
+
+### Anleitung
+# How to stop the program
+# clear function for image upload?
+
 
 
         
@@ -114,7 +120,7 @@ if app_mode == 'SIP Calculation':
         st.image(image2,  width=120) 
     
 
-    upload_file = st.file_uploader('Upload image files (Images are only uploaded to your local machine, not the internet)', type=['jpg','png','jpeg'], accept_multiple_files=True)# Check to see if a  file has been uploaded
+    upload_file = st.file_uploader('Load image files (Images are only loaded to your local machine. They are not uploaded to the internet)', type=['jpg','png','jpeg'], accept_multiple_files=True)# Check to see if a  file has been uploaded
     
 
     st.write('Examples of loaded images:')       
@@ -184,108 +190,110 @@ if app_mode == 'SIP Calculation':
                         'std HSV'   : ['std H channel', 'std S channel' , 'std V channel'],
                         }
     
+    with st.form('SIP Selection'):
     
-    
-    # Define the number of columns in the layout
-    num_columns = 5
-    columns = st.columns(num_columns)
-    check_dict = {}
-    # define each column
-    with columns[0]:
-        st.markdown('<p class="font2">' + 'Image dimensions' + '</p>', unsafe_allow_html=True)
-        check_dict['Image size (pixels)'] = st.checkbox('Image size (pixels)')
-        check_dict['Aspect ratio'] = st.checkbox('Aspect ratio')
-        st.markdown('<p class="font2">' + 'Luminance & Complexity & Contrast' + '</p>', unsafe_allow_html=True)
-        check_dict['RMS contrast'] = st.checkbox('RMS contrast')
-        check_dict['Luminance entropy'] = st.checkbox('Luminance entropy')
-        check_dict['Edge density'] = st.checkbox('Edge density')
-        check_dict['Complexity'] = st.checkbox('Complexity')
-    with columns[1]:
-        st.markdown('<p class="font2">' + 'Color' + '</p>', unsafe_allow_html=True)
-        check_dict['Color entropy'] =  st.checkbox('Color entropy')
-        st.write('Channel means')
-        check_dict['means RGB'] = st.checkbox('RGB', key='mean RGB')
-        check_dict['means LAB'] = st.checkbox('Lab', key='mean Lab')
-        check_dict['means HSV'] = st.checkbox('HSV', key='mean HSV')
-        st.write('Channel std')
-        check_dict['std RGB'] = st.checkbox('RGB',  key='std RGB')
-        check_dict['std LAB'] = st.checkbox('Lab',  key='std LAB')
-        check_dict['std HSV'] = st.checkbox('HSV',  key='std HSV')
-    with columns[2]:
-         st.markdown('<p class="font2">' + 'Symmetry & Balance' + '</p>', unsafe_allow_html=True)
-         st.write('Pixel based')
-         check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry')
-         check_dict['Center of mass'] = st.checkbox('Center of mass')
-         check_dict['Balance'] = st.checkbox('Balance')
-         st.write('CNN-feature based')
-         check_dict['left-right'] = st.checkbox('left-right')
-         check_dict['up-down'] = st.checkbox('up-down')
-         check_dict['left-right & up-down'] = st.checkbox('left-right & up-down')
-    with columns[3]:
-         st.markdown('<p class="font2">' + 'Fractality & Self-similarity' + '</p>', unsafe_allow_html=True)
-         st.write('Fractal dimension')
-         check_dict['2-dimensional'] = st.checkbox('2-dimensional')
-         check_dict['3-dimensional'] = st.checkbox('3-dimensional')
-         st.write('Fourier spectrum')
-         check_dict['Slope'] = st.checkbox('Slope')
-         check_dict['Sigma'] = st.checkbox('Sigma')
-         st.write('Self-similarity')
-         check_dict['PHOG-based'] = st.checkbox('PHOG-based')
-         check_dict['CNN-based'] = st.checkbox('CNN-based')
-    with columns[4]:
-         st.markdown('<p class="font2">' + 'Feature distribution & Entropy' + '</p>', unsafe_allow_html=True)
-         check_dict['Anisotropy'] = st.checkbox('Anisotropy')
-         check_dict['Homogeneity'] = st.checkbox('Homogeneity')
-         st.write('Edge orientation entropy')
-         check_dict['1st-order'] = st.checkbox('1st-order')
-         check_dict['2nd-order'] = st.checkbox('2nd-order')
-         st.write('CNN feature variance')
-         check_dict['Sparseness'] = st.checkbox('Sparseness')
-         check_dict['Variability'] = st.checkbox('Variability')
         
-
-
-#########################################
-###### ADD Parameters for individual SIPs
-#########################################
-
-    if check_dict['Sparseness'] or check_dict['Variability']:
-        st.markdown('<p class="font2">Parameters vor Sparseness and Variability:</p>', unsafe_allow_html=True)
-
-    if check_dict['Sparseness']:
-        p22_Sparseness = int(st.text_input('Enter Configuration for Sparseness Measure. How many image Partitions should be used?:', value="22",  help=None,  label_visibility="visible"))
-    
-    if check_dict['Variability']:
-        p12_Variability = int(st.text_input('Enter Configuration for Variability Measure. How many image Partitions should be used?:', value="12",  help=None,  label_visibility="visible"))
-    
-    if check_dict['Anisotropy'] or check_dict['Complexity'] or check_dict['PHOG-based']:
-        st.markdown('<p class="font2">Parameters vor PHOG Measures (Complexity, Anisotropy or PHOG-based Self-similarity):</p>', unsafe_allow_html=True)
-        
-        col1, col2 = st.columns(2)
-       
-        with col1:
-            section = int(st.text_input('Number of Sections:', value="2",  help=None,  label_visibility="visible"))
-            bins = int(st.text_input('Number of Bins:', value="16",  help=None,  label_visibility="visible"))
-            angle = int(st.text_input('Angle:', value="360",  help=None,  label_visibility="visible"))
-        with col2:
-            levels = int(st.text_input('Number of levels:', value="3",  help=None,  label_visibility="visible"))
-            re = int(st.text_input('Scale images to Number of Pixels (-1 = no scaling):', value="100000",  help=None,  label_visibility="visible"))
+        # Define the number of columns in the layout
+        num_columns = 5
+        columns = st.columns(num_columns)
+        check_dict = {}
+        # define each column
+        with columns[0]:
+            st.markdown('<p class="font2">' + 'Image dimensions' + '</p>', unsafe_allow_html=True)
+            check_dict['Image size (pixels)'] = st.checkbox('Image size' , help='Image size = widht + height')
+            check_dict['Aspect ratio'] = st.checkbox('Aspect ratio' , help='Aspect ratio = widht / height')
+            st.markdown('<p class="font2">' + 'Luminance & Complexity & Contrast' + '</p>', unsafe_allow_html=True)
+            check_dict['RMS contrast'] = st.checkbox('RMS contrast', help='RMS contrast = standard deviation of the Luminace channel (Lab)')
+            check_dict['Luminance entropy'] = st.checkbox('Luminance entropy' , help='Luminace entropy = shannon entropy the Luminace channel (Lab)')
+            check_dict['Edge density'] = st.checkbox('Edge density', help='Edge density = Density of Edges in the image after applying gabor filters'  )
+            check_dict['Complexity'] = st.checkbox('Complexity', help='Complexity based on PHOG method'  )
+        with columns[1]:
+            st.markdown('<p class="font2">' + 'Color' + '</p>', unsafe_allow_html=True)
+            check_dict['Color entropy'] =  st.checkbox('Color entropy', help='Color entropy = shannon entropy of the Hue channel (HSV)'  )
+            st.write('Channel means')
+            check_dict['means RGB'] = st.checkbox('RGB', key='mean RGB' , help='Arithmetic means for each color channel.'  )
+            check_dict['means LAB'] = st.checkbox('Lab', key='mean Lab' , help='Arithmetic means for each channel.'  )
+            check_dict['means HSV'] = st.checkbox('HSV', key='mean HSV',  help='Arithmetic means for S and V channel. Circular Mean for H channel.'  )
+            st.write('Channel std')
+            check_dict['std RGB'] = st.checkbox('RGB',  key='std RGB', help='Standard deviation for each color channel.'  )
+            check_dict['std LAB'] = st.checkbox('Lab',  key='std LAB', help='Standard deviation for each channel.'  )
+            check_dict['std HSV'] = st.checkbox('HSV',  key='std HSV', help='Standard deviation for S and V channel. Circular standard deviation for H channel.'  )
+        with columns[2]:
+             st.markdown('<p class="font2">' + 'Symmetry & Balance' + '</p>', unsafe_allow_html=True)
+             st.write('Pixel based')
+             check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry')
+             check_dict['Center of mass'] = st.checkbox('Center of mass')
+             check_dict['Balance'] = st.checkbox('Balance')
+             st.write('CNN-feature based')
+             check_dict['left-right'] = st.checkbox('left-right')
+             check_dict['up-down'] = st.checkbox('up-down')
+             check_dict['left-right & up-down'] = st.checkbox('left-right & up-down')
+        with columns[3]:
+             st.markdown('<p class="font2">' + 'Fractality & Self-similarity' + '</p>', unsafe_allow_html=True)
+             st.write('Fractal dimension')
+             check_dict['2-dimensional'] = st.checkbox('2-dimensional')
+             check_dict['3-dimensional'] = st.checkbox('3-dimensional')
+             st.write('Fourier spectrum')
+             check_dict['Slope'] = st.checkbox('Slope')
+             check_dict['Sigma'] = st.checkbox('Sigma')
+             st.write('Self-similarity')
+             check_dict['PHOG-based'] = st.checkbox('PHOG-based')
+             check_dict['CNN-based'] = st.checkbox('CNN-based')
+        with columns[4]:
+             st.markdown('<p class="font2">' + 'Feature distribution & Entropy' + '</p>', unsafe_allow_html=True)
+             check_dict['Anisotropy'] = st.checkbox('Anisotropy')
+             check_dict['Homogeneity'] = st.checkbox('Homogeneity')
+             st.write('Edge orientation entropy')
+             check_dict['1st-order'] = st.checkbox('1st-order')
+             check_dict['2nd-order'] = st.checkbox('2nd-order')
+             st.write('CNN feature variance')
+             check_dict['Sparseness'] = st.checkbox('Sparseness')
+             check_dict['Variability'] = st.checkbox('Variability')
             
-            col2a, col2b, col2c = st.columns(3)
-            
-            with col2a:
-                weigths1 = int(st.text_input('Weights for level1:', value=1,  help=None,  label_visibility="visible"))
-            with col2b: 
-                weigths2 = int(st.text_input('Weights for level2:', value=1,  help=None,  label_visibility="visible"))
-            with col2c:
-                weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
-            
-            
+    
+    
+    #########################################
+    ###### ADD Parameters for individual SIPs
+    #########################################
+    
+        if check_dict['Sparseness'] or check_dict['Variability']:
+            st.markdown('<p class="font2">Parameters vor Sparseness and Variability:</p>', unsafe_allow_html=True)
+    
+        if check_dict['Sparseness']:
+            p22_Sparseness = int(st.text_input('Enter Configuration for Sparseness Measure. How many image Partitions should be used?:', value="22",  help=None,  label_visibility="visible"))
         
+        if check_dict['Variability']:
+            p12_Variability = int(st.text_input('Enter Configuration for Variability Measure. How many image Partitions should be used?:', value="12",  help=None,  label_visibility="visible"))
+        
+        if check_dict['Anisotropy'] or check_dict['Complexity'] or check_dict['PHOG-based']:
+            st.markdown('<p class="font2">Parameters vor PHOG Measures (Complexity, Anisotropy or PHOG-based Self-similarity):</p>', unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+           
+            with col1:
+                re = int(st.text_input('Scale images to Number of Pixels (-1 = no scaling):', value="100000",  help=None,  label_visibility="visible"))
+                
+                
+                bins = int(st.text_input('Number of Bins:', value="16",  help=None,  label_visibility="visible"))
+                angle = int(st.text_input('Angle:', value="360",  help=None,  label_visibility="visible"))
+            with col2:
+                section = int(st.text_input('Number of Sections:', value="2",  help=None,  label_visibility="visible"))
+                levels = int(st.text_input('Number of levels:', value="3",  help=None,  label_visibility="visible"))
+                
+                col2a, col2b, col2c = st.columns(3)
+                with col2a:
+                    weigths1 = int(st.text_input('Weights for level1:', value=1,  help=None,  label_visibility="visible"))
+                with col2b: 
+                    weigths2 = int(st.text_input('Weights for level2:', value=1,  help=None,  label_visibility="visible"))
+                with col2c:
+                    weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
+                
+                
+        run = st.form_submit_button('Start calculation')
         
         
     
-    run = st.button('run calculation' )
+    # run = st.button('run calculation' )
     
     counter_checked_keys = 0
     if run: 
@@ -364,8 +372,11 @@ if app_mode == 'SIP Calculation':
                                 # print('Hello:'  , result_txt)
                                 
                             elif (key == 'means HSV') and check_dict[key]:
+                                ## get circular statistic for H channel
+                                circ_mean, _ = SIP.circ_stats(img_hsv)
+                                result_txt = result_txt + str(custom_round(circ_mean)) + ','
+                                # get normal mean for S and V
                                 res = SIP.mean_channels(img_hsv)
-                                result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
@@ -386,8 +397,11 @@ if app_mode == 'SIP Calculation':
                                 # print('Hello:'  , result_txt)
                                 
                             elif (key == 'std HSV') and check_dict[key]:
+                                ## get circular statistic for H channel
+                                _ , circ_std = SIP.circ_stats(img_hsv)
+                                result_txt = result_txt + str(custom_round(circ_std)) + ','
+                                ## get normal std for S and V channel
                                 res = SIP.std_channels(img_hsv)
-                                result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
@@ -566,7 +580,7 @@ if app_mode == 'SIP Calculation':
             else:
                 st.write('Select SIP(s) to compute first.')       
         else:
-            st.write('No image files selected. Upload images first.')
+            st.write('No image files found. Load images first.')
     
     
     

@@ -10,8 +10,9 @@ from skimage.filters import threshold_otsu
 
 PIL.Image.MAX_IMAGE_PIXELS = 10000000000 
 
+
 ### Mean RGB, Mean HSV, Mean LAB
-def mean_channels(img):
+def mean_channels(img, circ=False):
     # returns 1 value for grayscale and 3 values for color channels
     return np.mean(img, axis=(0,1))
     
@@ -19,6 +20,14 @@ def mean_channels(img):
 def std_channels(img):
     # returns 1 value for grayscale and 3 values for color channels
     return np.std(img, axis=(0,1))
+
+
+def circ_stats(img_hsv):
+    hue = img_hsv[:,:,0].astype("float")
+    circ_mean = stats.circmean(hue, high=1, low=0)
+    circ_std = stats.circstd(hue, high=1, low=0)
+    return circ_mean, circ_std
+        
     
 ### color entropy, shannon_entropy Gray, 
 def shannonentropy_channels(img):
@@ -1150,12 +1159,11 @@ def custom_differential_box_count(img_gray):  ### Takes 2 dim Image/array as inp
 
 if __name__ == "__main__":
     
-    import pytest
-    
+        
     # rootdir_img = '/home/ralf/Documents/18_SIP_Machine/test_img/img/Arcimboldo3.jpg'
     
     
-    rootdir_img = '/home/ralf/Documents/18_SIP_Machine/test_img/img/Aivazovsky2.jpg'
+    rootdir_img = '/home/ralf/Documents/18_SIP_Machine/test_img/img/Aivazovsky1.jpg'
     
     
     
@@ -1168,8 +1176,10 @@ if __name__ == "__main__":
     
     
     print('Lab(b):', mean_channels(img_lab)[2])
-    print('HSV(S):', mean_channels(img_hsv)[1])
+    print('HSV(S):', mean_channels(img_hsv)[0])
     print('HSV(H)entropy:', shannonentropy_channels(img_hsv)[0])
+    
+    print('H circmean and circstd:' , circ_stats(img_hsv) )
     
     # ### test mean channel values
     # r,g,b = mean_channels(img)
@@ -1194,41 +1204,41 @@ if __name__ == "__main__":
     
     
     
-    res_dict = {}
+    # res_dict = {}
     
     
-    # ## test CNN-measures
-    img = np.array( PIL.Image.open(  rootdir_img   )  , dtype= np.float32  )[:,:,(2,1,0)]
-    [kernel,bias] = np.load(open("/home/ralf/Documents/18_SIP_Machine/bvlc_alexnet_conv1.npy", "rb"), encoding="latin1", allow_pickle=True)
-    resp_scipy = conv2d(img, kernel, bias)
-    _, normalized_max_pooling_map_p12 = max_pooling (resp_scipy, patches=12 )
-    _, normalized_max_pooling_map_p22 = max_pooling (resp_scipy, patches=22 )
+    # # ## test CNN-measures
+    # img = np.array( PIL.Image.open(  rootdir_img   )  , dtype= np.float32  )[:,:,(2,1,0)]
+    # [kernel,bias] = np.load(open("/home/ralf/Documents/18_SIP_Machine/bvlc_alexnet_conv1.npy", "rb"), encoding="latin1", allow_pickle=True)
+    # resp_scipy = conv2d(img, kernel, bias)
+    # _, normalized_max_pooling_map_p12 = max_pooling (resp_scipy, patches=12 )
+    # _, normalized_max_pooling_map_p22 = max_pooling (resp_scipy, patches=22 )
     
     
-    res_dict['variability'] = get_CNN_Variance (normalized_max_pooling_map_p12, kind='variability' )
-    res_dict['sparseness'] = get_CNN_Variance (normalized_max_pooling_map_p22, kind='sparseness' )
+    # res_dict['variability'] = get_CNN_Variance (normalized_max_pooling_map_p12, kind='variability' )
+    # res_dict['sparseness'] = get_CNN_Variance (normalized_max_pooling_map_p22, kind='sparseness' )
     
     
-    # ## test Symmetry
-    lr,ud,lrud = get_symmetry(img, kernel, bias)
-    res_dict['symmetry-lr'] = lr
-    res_dict['symmetry-ud'] = ud
-    res_dict['symmetry-lrud'] = lrud
+    # # ## test Symmetry
+    # lr,ud,lrud = get_symmetry(img, kernel, bias)
+    # res_dict['symmetry-lr'] = lr
+    # res_dict['symmetry-ud'] = ud
+    # res_dict['symmetry-lrud'] = lrud
     
     
-    # ### 
+    # # ### 
     
     
-    # img = np.array( PIL.Image.open(  rootdir_img   ).convert('L'))
-    # print(do_first_and_second_order_entropy(img))
+    # # img = np.array( PIL.Image.open(  rootdir_img   ).convert('L'))
+    # # print(do_first_and_second_order_entropy(img))
     
 
 
-    for i in res_dict:
-        print (i, res_dict[i])
+    # for i in res_dict:
+    #     print (i, res_dict[i])
     
-    # for entry in df_test.iterrows():
-    #     print(entry)
+    # # for entry in df_test.iterrows():
+    # #     print(entry)
     
     
     
