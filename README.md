@@ -1,13 +1,12 @@
-
-<!-- BEGIN LATEST DOWNLOAD BUTTON -->
-<!-- END LATEST DOWNLOAD BUTTON -->
-
-
 # SIP Machine
 
 This project contains Python scripts to run a streamlit application in your browser. This application computes a number of commonly studied SIPs (statistical image properties) for aesthetic research.
 
 # Installation instructions
+
+<!-- BEGIN LATEST DOWNLOAD BUTTON -->
+<!-- END LATEST DOWNLOAD BUTTON -->
+
 [Linux Installation](docs/InstallationInstructions_Linux.md) \
 [MacOS Installation](docs/InstallationInstructions_MacOS.md)  \
 [Windows Installation](docs/InstallationInstructions_Windows.md) 
