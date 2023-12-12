@@ -1,5 +1,12 @@
 # Installation instructions Linux
 
+
+1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button.)
+
+2. If you do not already have Anaconda or Miniconda installed, download and install Anaconda:
+
+	https://www.anaconda.com/download
+
 3. Open a terminal on your system. If you do not know how to do this on your system, google it :-).
 
 4. Navigate to the downloaded files in the terminal window. If you do not know how to change folders in terminal, google it :-). 
@@ -10,7 +17,7 @@
 conda create --name SIP_machine -y
 ```
 
-This should create a python enviroment with the name "SIPmachine" 
+This should create a python enviroment with the name "SIPmachine".  
 
 
 6. Activate the new environment by typing into the terminal:
@@ -33,5 +40,5 @@ python -m streamlit run SIP_machine.py
 
 Your default browser should open the application on your local machine. It should look like this: 
 ![Screenshot](toolbox_screenshot.png)
-computer. The browser is only used as an interface. No data is uploaded to the Internet.
+The browser is only used as an interface. No data is uploaded to the Internet.
 
