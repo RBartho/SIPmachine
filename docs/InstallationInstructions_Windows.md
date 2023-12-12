@@ -1,4 +1,4 @@
-# Installation instructions
+# Installation instructions Windows
 
 1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button.)
 
@@ -6,11 +6,11 @@
 
 	https://www.anaconda.com/download
 
-3. Open a terminal on your system. If you do not know how to do this on your system, google it :-).
+3. Open an Anaconda-Prompt on your system. (Click Start, search for Anaconda Prompt, and click to open.)
 
-4. Navigate to the downloaded files in the terminal window. If you do not know how to change folders in terminal, google it :-). 
+4. Navigate to the downloaded files in the Anaconda-Prompt window. If you do not know how to change folders (with "cd" command) in a terminal, google it :-). 
 
-5. In the same folder where the file "requirements.txt" is, run this command in the terminal:
+5. In the same folder where the file "requirements.txt" is, run this command in the Anaconda-Prompt:
 
 ```shell
 conda create --name SIP_machine -y
@@ -19,7 +19,7 @@ conda create --name SIP_machine -y
 This should create a python enviroment with the name "SIPmachine" 
 
 
-6. Activate the new environment by typing into the terminal:
+6. Activate the new environment by typing into the same Anaconda-Prompt window:
 
 ```shell
 conda activate SIP_machine
@@ -39,4 +39,4 @@ python -m streamlit run SIP_machine.py
 
 Your default browser should open the application on your local machine. It should look like this: 
 ![Screenshot](toolbox_screenshot.png)
-computer. The browser is only used as an interface. No data is uploaded to the Internet.
+The browser is only used as an interface. No data is uploaded to the Internet.
