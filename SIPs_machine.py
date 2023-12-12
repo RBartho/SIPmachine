@@ -1,13 +1,12 @@
 #Import the required Libraries
 import streamlit as st
-import pandas as pd
 import numpy as np
 from  PIL import Image
 from skimage import color
 
 
 ### custom import
-import sip_machine_funct as SIP
+from SIPmachine import balance_sips, box_count_sips, CNN_sips, color_and_simple_sips, edge_entropy_sips, fourier_sips, PHOG_sips
 
 
 ###################### TODO's
@@ -30,10 +29,13 @@ import sip_machine_funct as SIP
 # clear function for image upload?
 
 
-
+# file size??
         
     
+# fix names in result txt
 
+
+# fix parameter selection
 
 
 
@@ -54,22 +56,12 @@ def custom_round(num):
 
 
 
-def results_summary_to_dataframe(results):
-    '''take the result of an statsmodel results table and transforms it into a dataframe'''
-    pvals = results.pvalues
-    coeff = results.params
-    conf_lower = results.conf_int()[0]
-    conf_higher = results.conf_int()[1]
-
-    results_df = pd.DataFrame({"pvals":pvals,
-                               "coeff":coeff,
-                               "conf_lower":conf_lower,
-                               "conf_higher":conf_higher
-                                })
-
-    #Reordering...
-    results_df = results_df[["coeff","pvals","conf_lower","conf_higher"]]
-    return results_df
+### functions to update session state
+def selected_SIPs():
+    st.session_state["stage"] = "SIPs_selected"
+    
+def selected_Params():
+    st.session_state["stage"] = "Params_selected"
 
 
 
@@ -106,8 +98,8 @@ if app_mode == 'SIP Calculation':
     </style> """, unsafe_allow_html=True)
 
     
-    image1 = Image.open('logo.png')
-    image2 = Image.open('LogoDesign EAJ final.png')
+    image1 = Image.open('images/logo_ukj.png')
+    image2 = Image.open('images/LogoDesign EAJ final.png')
     
     #Create two columns with different width
     col1, col2, col3 = st.columns( [0.7, 0.15, 0.15])
@@ -153,34 +145,7 @@ if app_mode == 'SIP Calculation':
     </style>""",unsafe_allow_html=True)
     
     st.markdown('<p class="font2">Choose the SIPs to calculate:</p>', unsafe_allow_html=True)
-    
-    # Define the number of columns and rows in the grid
-    
-    # groups = {
-    #     "Image dimensions" : ['Image size (pixels)', 'Aspect ratio'],
-                            
-        
-        
-        
-    #     "Colour Measures": ['means RGB',  
-    #                         'means LAB',  
-    #                         'means HSV',
-    #                         'std RGB',
-    #                         'std LAB',
-    #                         'std HSV'
-    #                         ],
-        
-    #     "Self-Similarity": ['Self-Similarity (PHOG)', 'CNN-based' ],
-    #     "Entropy measures": ['1st order Edge Entropy', '2nd order Edge Entropy', 'Shannon Entropy', 'Anisotropy (PHOG)','Homogeneity (HG)', 'Color_Entropy' ],
-    #     "CNN Variances": ['Sparseness', 'Variability' ],
-    #     "Fourier Measures": ['Sigma', 'Slope'],
-    #     "Symmetry and Balance": ['Balance', 'Deviation of the Center of Mass (DCM)' ,  'Mirror Symmetry (MS)' , 'left-right' , 'up-down' ,  'left-right & up-down' ],
-    #     "Complexity" : ['Complexity', 'Edge Density' ,  'Fractal Dimension 2D' , 'Fractal Dimension 3D' ],
-    #     "Misc": ['RMS_Contrast']
-    # }
-    
-    
-   
+
     dict_of_simple_color_measures = {
                         'means RGB' : ['mean R channel', 'mean G channel' , 'mean (RG)B channel'],  
                         'means LAB' : ['mean L channel', 'mean A channel' , 'mean (LA)B channel'],  
@@ -250,50 +215,55 @@ if app_mode == 'SIP Calculation':
              check_dict['Sparseness'] = st.checkbox('Sparseness')
              check_dict['Variability'] = st.checkbox('Variability')
             
-    
-    
-    #########################################
-    ###### ADD Parameters for individual SIPs
-    #########################################
-    
-        if check_dict['Sparseness'] or check_dict['Variability']:
-            st.markdown('<p class="font2">Parameters vor Sparseness and Variability:</p>', unsafe_allow_html=True)
-    
-        if check_dict['Sparseness']:
-            p22_Sparseness = int(st.text_input('Enter Configuration for Sparseness Measure. How many image Partitions should be used?:', value="22",  help=None,  label_visibility="visible"))
-        
-        if check_dict['Variability']:
-            p12_Variability = int(st.text_input('Enter Configuration for Variability Measure. How many image Partitions should be used?:', value="12",  help=None,  label_visibility="visible"))
-        
-        if check_dict['Anisotropy'] or check_dict['Complexity'] or check_dict['PHOG-based']:
-            st.markdown('<p class="font2">Parameters vor PHOG Measures (Complexity, Anisotropy or PHOG-based Self-similarity):</p>', unsafe_allow_html=True)
+        commit_sips = st.form_submit_button('Commit selection' , on_click =  selected_SIPs() )
             
-            col1, col2 = st.columns(2)
-           
-            with col1:
-                re = int(st.text_input('Scale images to Number of Pixels (-1 = no scaling):', value="100000",  help=None,  label_visibility="visible"))
-                
-                
-                bins = int(st.text_input('Number of Bins:', value="16",  help=None,  label_visibility="visible"))
-                angle = int(st.text_input('Angle:', value="360",  help=None,  label_visibility="visible"))
-            with col2:
-                section = int(st.text_input('Number of Sections:', value="2",  help=None,  label_visibility="visible"))
-                levels = int(st.text_input('Number of levels:', value="3",  help=None,  label_visibility="visible"))
-                
-                col2a, col2b, col2c = st.columns(3)
-                with col2a:
-                    weigths1 = int(st.text_input('Weights for level1:', value=1,  help=None,  label_visibility="visible"))
-                with col2b: 
-                    weigths2 = int(st.text_input('Weights for level2:', value=1,  help=None,  label_visibility="visible"))
-                with col2c:
-                    weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
-                
-                
-        run = st.form_submit_button('Start calculation')
-        
+                #########################################
+                ###### ADD Parameters for individual SIPs
+                #########################################
         
     
-    # run = st.button('run calculation' )
+
+    if  check_dict['Sparseness'] or check_dict['Variability'] or check_dict['Anisotropy'] or check_dict['Complexity'] or check_dict['PHOG-based']:
+        if st.session_state["stage"] == "SIPs_selected":
+            with st.form('Param Selection'):
+
+                if check_dict['Sparseness'] or check_dict['Variability']:
+                    st.markdown('<p class="font2">Parameters for Sparseness and Variability:</p>', unsafe_allow_html=True)
+            
+                if check_dict['Sparseness']:
+                    p22_Sparseness = int(st.text_input('Enter Configuration for Sparseness Measure. How many image Partitions should be used?:', value="22",  help=None,  label_visibility="visible"))
+                
+                if check_dict['Variability']:
+                    p12_Variability = int(st.text_input('Enter Configuration for Variability Measure. How many image Partitions should be used?:', value="12",  help=None,  label_visibility="visible"))
+                
+                if check_dict['Anisotropy'] or check_dict['Complexity'] or check_dict['PHOG-based']:
+                    st.markdown('<p class="font2">Parameters for PHOG Measures (Complexity, Anisotropy or PHOG-based Self-similarity):</p>', unsafe_allow_html=True)
+                    
+                    col1, col2 = st.columns(2)
+                   
+                    with col1:
+                        re = int(st.text_input('Scale images to Number of Pixels (-1 = no scaling):', value="100000",  help=None,  label_visibility="visible"))
+                        
+                        
+                        bins = int(st.text_input('Number of Bins:', value="16",  help=None,  label_visibility="visible"))
+                        angle = int(st.text_input('Angle:', value="360",  help=None,  label_visibility="visible"))
+                    with col2:
+                        section = int(st.text_input('Number of Sections:', value="2",  help=None,  label_visibility="visible"))
+                        levels = int(st.text_input('Number of levels:', value="3",  help=None,  label_visibility="visible"))
+                        
+                        col2a, col2b, col2c = st.columns(3)
+                        with col2a:
+                            weigths1 = int(st.text_input('Weights for level1:', value=1,  help=None,  label_visibility="visible"))
+                        with col2b: 
+                            weigths2 = int(st.text_input('Weights for level2:', value=1,  help=None,  label_visibility="visible"))
+                        with col2c:
+                            weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
+                        
+                submitted = st.form_submit_button("Commit Parameter Selection", on_click=selected_Params())
+                
+
+
+    run = st.button('Run calculation' )
     
     counter_checked_keys = 0
     if run: 
@@ -358,14 +328,14 @@ if app_mode == 'SIP Calculation':
                             
                             
                             if (key == 'means RGB') and check_dict[key]:
-                                res = SIP.mean_channels(img_rgb)
+                                res = color_and_simple_sips.mean_channels(img_rgb)
                                 result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
                             
                             elif (key == 'means LAB') and check_dict[key]:
-                                res = SIP.mean_channels(img_lab)
+                                res = color_and_simple_sips.mean_channels(img_lab)
                                 result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
@@ -373,24 +343,24 @@ if app_mode == 'SIP Calculation':
                                 
                             elif (key == 'means HSV') and check_dict[key]:
                                 ## get circular statistic for H channel
-                                circ_mean, _ = SIP.circ_stats(img_hsv)
+                                circ_mean, _ = color_and_simple_sips.circ_stats(img_hsv)
                                 result_txt = result_txt + str(custom_round(circ_mean)) + ','
                                 # get normal mean for S and V
-                                res = SIP.mean_channels(img_hsv)
+                                res = color_and_simple_sips.mean_channels(img_hsv)
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
                                 
                             
                             elif (key == 'std RGB') and check_dict[key]:
-                                res = SIP.std_channels(img_rgb)
+                                res = color_and_simple_sips.std_channels(img_rgb)
                                 result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
                             
                             elif (key == 'std LAB') and check_dict[key]:
-                                res = SIP.std_channels(img_lab)
+                                res = color_and_simple_sips.std_channels(img_lab)
                                 result_txt = result_txt + str(custom_round(res[0])) + ','
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
@@ -398,10 +368,10 @@ if app_mode == 'SIP Calculation':
                                 
                             elif (key == 'std HSV') and check_dict[key]:
                                 ## get circular statistic for H channel
-                                _ , circ_std = SIP.circ_stats(img_hsv)
+                                _ , circ_std = color_and_simple_sips.circ_stats(img_hsv)
                                 result_txt = result_txt + str(custom_round(circ_std)) + ','
                                 ## get normal std for S and V channel
-                                res = SIP.std_channels(img_hsv)
+                                res = color_and_simple_sips.std_channels(img_hsv)
                                 result_txt = result_txt + str(custom_round(res[1])) + ','
                                 result_txt = result_txt + str(custom_round(res[2])) + ','
                                 # print('Hello:'  , result_txt)
@@ -409,7 +379,7 @@ if app_mode == 'SIP Calculation':
 
                                 
                             elif (key == 'Color entropy') and check_dict[key]:
-                                res = SIP.shannonentropy_channels(img_hsv[:,:,0])
+                                res = color_and_simple_sips.shannonentropy_channels(img_hsv[:,:,0])
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 # print('Hello:'  , result_txt)
 
@@ -426,7 +396,7 @@ if app_mode == 'SIP Calculation':
                                         result_txt = result_txt + str(custom_round(edge_d)) + ','
                                 # if not jet calculated, calculate both
                                 else:
-                                    res = SIP.do_first_and_second_order_entropy_and_edge_density (img_gray)
+                                    res = edge_entropy_sips.do_first_and_second_order_entropy_and_edge_density (img_gray)
                                     first_ord = res[0]
                                     sec_ord   = res[1]
                                     edge_d    = res[2]
@@ -438,17 +408,17 @@ if app_mode == 'SIP Calculation':
                                         result_txt = result_txt + str(custom_round(edge_d)) + ','
                                     
                             elif (key == 'Luminance entropy') and check_dict[key]:
-                                res = SIP.shannonentropy_channels(img_lab[:,:,0])
+                                res = color_and_simple_sips.shannonentropy_channels(img_lab[:,:,0])
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 # print('Hello:'  , result_txt)
                                 
                             elif (key == 'Image size (pixels)') and check_dict[key]:
-                                res = SIP.image_size(img_rgb)
+                                res = color_and_simple_sips.image_size(img_rgb)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 # print('Hello:'  , result_txt)
                                 
                             elif (key == 'Aspect ratio') and check_dict[key]:
-                                res = SIP.aspect_ratio(img_rgb)
+                                res = color_and_simple_sips.aspect_ratio(img_rgb)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 # print('Hello:'  , result_txt)
                                 
@@ -468,7 +438,7 @@ if app_mode == 'SIP Calculation':
                                 # if not jet calculated, calculate all syms together and store results
                                 else:
 
-                                    sym_lr,sym_ud,sym_lrud = SIP.get_symmetry(img_rgb, kernel, bias)
+                                    sym_lr,sym_ud,sym_lrud = CNN_sips.get_symmetry(img_rgb, kernel, bias)
                                     
                                     if key == 'left-right':
                                         result_txt = result_txt + str(custom_round(sym_lr)) + ','
@@ -480,25 +450,25 @@ if app_mode == 'SIP Calculation':
                                 
                             elif (key == 'Sparseness') and check_dict[key]:
                                 
-                                resp_scipy = SIP.conv2d(img_rgb, kernel, bias)
-                                _, normalized_max_pooling_map_Sparseness  = SIP.max_pooling (resp_scipy, patches=p22_Sparseness )
-                                sparseness =  SIP.get_CNN_Variance (normalized_max_pooling_map_Sparseness   , kind='sparseness' )
+                                resp_scipy = CNN_sips.conv2d(img_rgb, kernel, bias)
+                                _, normalized_max_pooling_map_Sparseness  = CNN_sips.max_pooling (resp_scipy, patches=p22_Sparseness )
+                                sparseness =  CNN_sips.get_CNN_Variance (normalized_max_pooling_map_Sparseness   , kind='sparseness' )
                                 result_txt = result_txt + str(custom_round(sparseness)) + ','
                                 
 
                             elif (key == 'Variability') and check_dict[key]:
                                 
-                                resp_scipy = SIP.conv2d(img_rgb, kernel, bias)
-                                _, normalized_max_pooling_map_Variability = SIP.max_pooling (resp_scipy, patches=p12_Variability )
-                                variability = SIP.get_CNN_Variance (normalized_max_pooling_map_Variability , kind='variability' )
+                                resp_scipy = CNN_sips.conv2d(img_rgb, kernel, bias)
+                                _, normalized_max_pooling_map_Variability = CNN_sips.max_pooling (resp_scipy, patches=p12_Variability )
+                                variability = CNN_sips.get_CNN_Variance (normalized_max_pooling_map_Variability , kind='variability' )
                                 result_txt = result_txt + str(custom_round(variability)) + ','
 
                             elif (key == 'CNN-based') and check_dict[key]:
                                 img_switch_channel = img_rgb[:,:,(2,1,0)].astype(np.float32)
-                                resp_scipy = SIP.conv2d(img_switch_channel, kernel, bias)
-                                _, normalized_max_pooling_map_8 = SIP.max_pooling (resp_scipy, patches=8 )
-                                _, normalized_max_pooling_map_1 = SIP.max_pooling (resp_scipy, patches=1 )
-                                cnn_self_sym = SIP.get_selfsimilarity (normalized_max_pooling_map_1 , normalized_max_pooling_map_8 )
+                                resp_scipy = CNN_sips.conv2d(img_switch_channel, kernel, bias)
+                                _, normalized_max_pooling_map_8 = CNN_sips.max_pooling (resp_scipy, patches=8 )
+                                _, normalized_max_pooling_map_1 = CNN_sips.max_pooling (resp_scipy, patches=1 )
+                                cnn_self_sym = CNN_sips.get_selfsimilarity (normalized_max_pooling_map_1 , normalized_max_pooling_map_8 )
                                 result_txt = result_txt + str(custom_round(cnn_self_sym)) + ','
 
 
@@ -511,39 +481,39 @@ if app_mode == 'SIP Calculation':
                                     elif key == 'Slope':
                                         result_txt = result_txt + str(custom_round(slope)) + ','
                                 else:
-                                    sigma , slope = SIP.fourier_sigma(img_lab[:,:,0])
+                                    sigma , slope = fourier_sips.fourier_sigma(img_lab[:,:,0])
                                     if key == 'Sigma':
                                         result_txt = result_txt + str(custom_round(sigma)) + ','
                                     elif key == 'Slope':
                                         result_txt = result_txt + str(custom_round(slope)) + ','
                                 
                             elif (key == 'RMS contrast') and check_dict[key]:
-                                res = SIP.std_channels(img_lab)[0]
+                                res = color_and_simple_sips.std_channels(img_lab)[0]
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 
                                 
                             elif (key == 'Balance') and check_dict[key]:
-                                res = SIP.APB_Score(img_gray)
+                                res = balance_sips.APB_Score(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 
                             elif (key == 'Center of mass') and check_dict[key]:
-                                res = SIP.DCM_Key(img_gray)
+                                res = balance_sips.DCM_Key(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 
                             elif (key == 'Mirror symmetry') and check_dict[key]:
-                                res = SIP.MS_Score(img_gray)
+                                res = balance_sips.MS_Score(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
 
                             elif (key == 'Homogeneity') and check_dict[key]:
-                                res = SIP.entropy_score_2d(img_gray)
+                                res = balance_sips.entropy_score_2d(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
 
                             elif (key == '2-dimensional') and check_dict[key]:
-                                res = SIP.custom_differential_box_count(img_gray)
+                                res = box_count_sips.custom_differential_box_count(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
 
                             elif (key == '3-dimensional') and check_dict[key]:
-                                res = SIP.box_count_2d(img_gray)
+                                res = box_count_sips.box_count_2d(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                             
                                 
@@ -561,7 +531,7 @@ if app_mode == 'SIP Calculation':
                                         result_txt = result_txt + str(custom_round(anisotropy)) + ','
                                                  
                                 else:
-                                    self_sim, complexity, anisotropy = SIP.PHOGfromImage(img_rgb, section=section, bins=bins, angle=angle, levels=levels, re=re, sesfweight=[weigths1,weigths2,weigths3] )
+                                    self_sim, complexity, anisotropy = PHOG_sips.PHOGfromImage(img_rgb, section=section, bins=bins, angle=angle, levels=levels, re=re, sesfweight=[weigths1,weigths2,weigths3] )
                                     if key == 'PHOG-based':
                                         result_txt = result_txt + str(custom_round(self_sim)) + ','
                                     elif key == 'Complexity':
@@ -593,78 +563,10 @@ if app_mode == 'SIP Calculation':
           
     if enable_download:
        st.success('Calculations finished. Click Download Results. A txt-file containing the results will be downloaded to your default download folder.', icon="✅")
-       download = st.download_button('Download Results', download_file)  # Defaults to 'text/plain'
+       download = st.download_button('Download Results', download_file, file_name='SIPmachine_results.csv')  # Defaults to 'text/plain'
         
   
     
-# if app_mode == 'Visualization':
-    
-#     st.markdown(""" <style> .font0 {
-#     font-size:35px ; font-family: 'Cooper Black'; color: #FF9633;} 
-#     </style> """, unsafe_allow_html=True)
-#     st.markdown('<p class="font0">Vizualization</p>', unsafe_allow_html=True)
-    
-    
-#     df = pd.read_csv( '/home/ralf/Documents/18_SIP_Machine/GUI/test.csv' , sep=',')
-#     scaler = MinMaxScaler()
-#     df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns).copy()
-    
-#     df.drop('score', axis=1, inplace=True)    
-    
-#     fig = plt.figure(figsize=(12,8))
-#     plt.grid()
-#     sns.boxplot(df )
-#     plt.xticks(rotation = 90)
-#     plt.ylim([0,1])
-    
-
-#     st.pyplot(fig)
-    
-
-
-
-# if app_mode == 'Prediction':
-    
-#     st.markdown(""" <style> .font0 {
-#     font-size:35px ; font-family: 'Cooper Black'; color: #FF9633;} 
-#     </style> """, unsafe_allow_html=True)
-#     st.markdown('<p class="font0">Prediction</p>', unsafe_allow_html=True)
-    
-#     if st.sidebar.checkbox("Multiple Linear Regression"):
-        
-#         st.markdown(""" <style> .font1 {
-#         font-size:20px ; font-family: 'Cooper Black'; color: #FF9633;} 
-#         </style> """, unsafe_allow_html=True)
-#         st.markdown('<p class="font1">Multiple Linear Regression</p>', unsafe_allow_html=True)
-        
-        
-#         df = pd.read_csv( '/home/ralf/Documents/18_SIP_Machine/GUI/test.csv' , sep=',')
-#         scaler = MinMaxScaler()
-#         df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns).copy()
-        
-#         score = np.asarray(df['score'])
-#         df.drop('score', axis=1, inplace=True)    
-        
-        
-        
-#         X = df.to_numpy()
-#         X = stm.add_constant(X)
-#         model = stm.OLS(score,X)
-#         res_ols = model.fit()
-#         results_summary = res_ols.summary()
-        
-       
-
-#         df_show = (res_ols.summary().tables[1])
-        
-        
-#         st.dataframe(df_show)
-        
-#     if st.sidebar.checkbox("Multiple Linear Regression with standardized Betas"):
-#         1+1
-        
-#     if st.sidebar.checkbox("Convolutional Neural Network"):
-#         1+1
 
     
 if app_mode == 'Documentation':
