@@ -11,31 +11,20 @@ from SIPmachine import balance_sips, box_count_sips, CNN_sips, color_and_simple_
 
 ###################### TODO's
 
-# image resize option?
+# finish image resize option
 
-# add parameters for Slope
+# add parameters for Slope und drei Slope version zusammenbringen/zusammenbringbar?
 
 # Gitlab automatic Code Tests
-
-
-# überprüfen, was "der Chinese" alles in seiner Toolbox hatte
-
-# drei Slope version zusammenbringen/zusammenbringbar?
 
 # Minifehler in Code kommentieren, Richtige Version auskommentieren
 
 ### Anleitung
 # How to stop the program
 # clear function for image upload?
-
-
-# file size??
-        
     
-# fix names in result txt
 
-
-# fix parameter selection
+# fix the names in result txt
 
 
 
@@ -112,11 +101,27 @@ if app_mode == 'SIP Calculation':
         st.image(image2,  width=120) 
     
 
-    upload_file = st.file_uploader('Load image files (Images are only loaded to your local machine. They are not uploaded to the internet)', type=['jpg','png','jpeg'], accept_multiple_files=True)# Check to see if a  file has been uploaded
-    
+    upload_file = st.file_uploader('Load image files (Images are only loaded to your local machine. They are not uploaded to the internet)', type=['jpg','png','jpeg'], accept_multiple_files=True, label_visibility="collapsed" )# Check to see if a  file has been uploaded
 
-    st.write('Examples of loaded images:')       
-    st.image(upload_file[:20], width=120 )
+    # st.markdown('''
+    #     <style>
+    #         .uploadedFile {display: none}
+    #     <style>''',
+    #     unsafe_allow_html=True)
+
+
+    if len(upload_file) != 0 :
+        st.write('Examples of loaded images:')       
+        st.image(upload_file[:20], width=120 )
+    
+    
+    ### downsize images?
+    downsize = st.checkbox('Downsize large images')
+    if downsize and len(upload_file) != 0 :
+        col1,_,_ = st.columns(3)
+        with col1:
+            small_side = int(st.text_input('Reduce large images to the following image size (width + height) while maintaining the aspect ratio:', value="2000",  help=None,  label_visibility="visible"))
+            
     
     ### Check for commas in image names, since commas are the delimiters in the result txt.
     
@@ -128,23 +133,10 @@ if app_mode == 'SIP Calculation':
     
     replace_commas = False
     if has_comma:
-        st.warning('Commas found in image filenames. This is not recommended as commas are the delimiters in the results.txt file. Replace the commas with underscores in image names in result.txt?', icon="⚠️")
+        st.warning('Commas found in image filenames. This is not recommended as commas are the delimiters in the downloaded CSV file containing the results. Replace the commas with underscores in the image names in the CSV file?', icon="⚠️")
         replace_commas = st.checkbox('Replace commas with underscores.')
 
-    st.markdown("""
-
-                
-    <style>
     
-    div.stTitle {
-    
-    font-size:40px;
-    
-    }
-    
-    </style>""",unsafe_allow_html=True)
-    
-    st.markdown('<p class="font2">Choose the SIPs to calculate:</p>', unsafe_allow_html=True)
 
     dict_of_simple_color_measures = {
                         'means RGB' : ['mean R channel', 'mean G channel' , 'mean (RG)B channel'],  
@@ -156,6 +148,14 @@ if app_mode == 'SIP Calculation':
                         }
     
     with st.form('SIP Selection'):
+        
+        st.markdown("""       
+        <style>
+        div.stTitle {
+        font-size:40px;
+        }
+        </style>""",unsafe_allow_html=True)
+        st.markdown('<p class="font2">Choose the SIPs to calculate:</p>', unsafe_allow_html=True)
     
         
         # Define the number of columns in the layout
@@ -186,8 +186,8 @@ if app_mode == 'SIP Calculation':
         with columns[2]:
              st.markdown('<p class="font2">' + 'Symmetry & Balance' + '</p>', unsafe_allow_html=True)
              st.write('Pixel based')
-             check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry')
-             check_dict['Center of mass'] = st.checkbox('Center of mass')
+             check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry' )
+             check_dict['Center of mass'] = st.checkbox('Center of mass', help = 'Distance of the centre of mass from the centre of the image in percent.'  )
              check_dict['Balance'] = st.checkbox('Balance')
              st.write('CNN-feature based')
              check_dict['left-right'] = st.checkbox('left-right')

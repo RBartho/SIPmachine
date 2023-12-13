@@ -281,12 +281,6 @@ def entropy_score_2d(im):  ## takes grayscale image!!
     xh = x.flatten(order='F')
     all_sum = np.sum(xh)
     
-    #j = np.nonzero(xh)
-    # # entropy
-    # xh = xh / all_sum    
-    # hx = -np.sum(xh[j] * np.log2(xh[j]))
-    # en_all = (hx / max_entropy) * 100
-
     # horizontal entropy
     max_entropy = np.log2(hbins)   
     y = np.sum(x, axis=0) / all_sum
