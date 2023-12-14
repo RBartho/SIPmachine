@@ -17,7 +17,7 @@
 conda create --name SIP_machine -y
 ```
 
-This should create a python enviroment with the name "SIPmachine".  
+This should create a python enviroment with the name "SIP_machine".  
 
 
 6. Activate the new environment by typing into the terminal:
