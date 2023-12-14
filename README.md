@@ -35,4 +35,4 @@ python -m streamlit run SIP_machine.py
 4. The number of images you can load into the application at one time is limited by the amount of RAM your computer has. Also, large images require much more processing time than smaller images.
 
 # Privacy and security
-All calculations and data transfers take place on your local computer. The browser is only used as an interface. No data is uploaded to the Internet.
+All calculations and data transfers of the application take place on your local computer. The browser is only used as an interface. No data is uploaded to the Internet.
