@@ -1,7 +1,7 @@
 # Installation instructions Windows
 
 
-1. If you do not already have Anaconda or Miniconda installed, download and install Anaconda for your operating system (Windows, Mac, Linux):
+1. If you do not already have Anaconda or Miniconda installed, download and install Anaconda for your operating system (use the default install options):
 
 	https://www.anaconda.com/download
 
