@@ -18,7 +18,7 @@ Download all the files from this GitHub repository to your computer. (Download t
 ```shell
 conda activate SIP_machine
 ```
-3. Now start the streamlit application from the terminal in the same folder as above with
+3. Now start the application with:
 
 ```shell
 python -m streamlit run SIP_machine.py
