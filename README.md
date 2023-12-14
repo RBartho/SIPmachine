@@ -32,7 +32,7 @@ python -m streamlit run SIP_machine.py
 
 3. Multithreading is not supported as it would limit platform independence. To calculate SIPs for very large datasets, you may want to consider splitting the data and running multiple instances of the application.
 
-4. The number of images you can load into the application at one time is limited by the amount of RAM you have. Also, large images require much more processing time than smaller images.
+4. The number of images you can load into the application at one time is limited by the amount of RAM your computer has. Also, large images require much more processing time than smaller images.
 
 # Privacy and security
 All calculations and data transfers take place on your local computer. The browser is only used as an interface. No data is uploaded to the Internet.
