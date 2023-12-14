@@ -1,8 +1,5 @@
 # Installation instructions Linux
 
-
-1. Download all files from this GitHub repository to your computer. (Download under green "Code" Button here: ![Back to mainpage]([https://github.com/RBartho/SIPmachine/tree/main](https://github.com/RBartho/SIPmachine/tree/main)).)
-
 2. If you do not already have Anaconda or Miniconda installed, download and install Anaconda:
 
 	https://www.anaconda.com/download
