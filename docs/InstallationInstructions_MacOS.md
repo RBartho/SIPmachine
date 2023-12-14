@@ -1,6 +1,6 @@
 # Installation instructions MacOS
 
-1. If you do not already have Anaconda or Miniconda installed, download and install Anaconda:
+1. If you do not already have Anaconda or Miniconda installed, download and install Anaconda (use default install options):
 
 	https://www.anaconda.com/download
 
