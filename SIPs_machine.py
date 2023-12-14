@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 from  PIL import Image
 from skimage import color
-
+import sys
 
 ### custom import
 from SIPmachine import balance_sips, box_count_sips, CNN_sips, color_and_simple_sips, edge_entropy_sips, fourier_sips, PHOG_sips
@@ -11,7 +11,7 @@ from SIPmachine import balance_sips, box_count_sips, CNN_sips, color_and_simple_
 
 ###################### TODO's
 
-# finish image resize option
+# finish image resize option --> seperate window
 
 # add parameters for Slope und drei Slope version zusammenbringen/zusammenbringbar?
 
@@ -25,6 +25,9 @@ from SIPmachine import balance_sips, box_count_sips, CNN_sips, color_and_simple_
     
 
 # fix the names in result txt
+
+
+## change seperator to ';'
 
 
 
@@ -113,30 +116,28 @@ if app_mode == 'SIP Calculation':
     if len(upload_file) != 0 :
         st.write('Examples of loaded images:')       
         st.image(upload_file[:20], width=120 )
+
+## check for large files and for commas in filenames
     
-    
-    ### downsize images?
-    downsize = st.checkbox('Downsize large images')
-    if downsize and len(upload_file) != 0 :
-        col1,_,_ = st.columns(3)
-        with col1:
-            small_side = int(st.text_input('Reduce large images to the following image size (width + height) while maintaining the aspect ratio:', value="2000",  help=None,  label_visibility="visible"))
-            
-    
-    ### Check for commas in image names, since commas are the delimiters in the result txt.
-    
+    has_large_image_files = False
     has_comma = False
-    for image_name in upload_file:
-        print(image_name)
-        if ',' in image_name.name:
+    for file in upload_file:
+        if ',' in file.name:
             has_comma = True
-    
+        if sys.getsizeof(file) > 4e+6:
+            has_large_image_files = True
+        
+    if has_large_image_files:
+        st.warning('Some loaded images are quite large (more than 4 MB). Consider reducing their size, as for most SIPs the calculation time increases (exponentially) with the image size.', icon="⚠️")
+
+
     replace_commas = False
     if has_comma:
         st.warning('Commas found in image filenames. This is not recommended as commas are the delimiters in the downloaded CSV file containing the results. Replace the commas with underscores in the image names in the CSV file?', icon="⚠️")
         replace_commas = st.checkbox('Replace commas with underscores.')
 
     
+######################################
 
     dict_of_simple_color_measures = {
                         'means RGB' : ['mean R channel', 'mean G channel' , 'mean (RG)B channel'],  
@@ -155,7 +156,7 @@ if app_mode == 'SIP Calculation':
         font-size:40px;
         }
         </style>""",unsafe_allow_html=True)
-        st.markdown('<p class="font2">Choose the SIPs to calculate:</p>', unsafe_allow_html=True)
+        st.markdown('<p class="font2">Choose SIPs to calculate:</p>', unsafe_allow_html=True)
     
         
         # Define the number of columns in the layout
@@ -175,47 +176,47 @@ if app_mode == 'SIP Calculation':
         with columns[1]:
             st.markdown('<p class="font2">' + 'Color' + '</p>', unsafe_allow_html=True)
             check_dict['Color entropy'] =  st.checkbox('Color entropy', help='Color entropy = shannon entropy of the Hue channel (HSV)'  )
-            st.write('Channel means')
+            st.write('**Channel means**')
             check_dict['means RGB'] = st.checkbox('RGB', key='mean RGB' , help='Arithmetic means for each color channel.'  )
             check_dict['means LAB'] = st.checkbox('Lab', key='mean Lab' , help='Arithmetic means for each channel.'  )
             check_dict['means HSV'] = st.checkbox('HSV', key='mean HSV',  help='Arithmetic means for S and V channel. Circular Mean for H channel.'  )
-            st.write('Channel std')
+            st.write('**Channel Standard Deviation**')
             check_dict['std RGB'] = st.checkbox('RGB',  key='std RGB', help='Standard deviation for each color channel.'  )
             check_dict['std LAB'] = st.checkbox('Lab',  key='std LAB', help='Standard deviation for each channel.'  )
             check_dict['std HSV'] = st.checkbox('HSV',  key='std HSV', help='Standard deviation for S and V channel. Circular standard deviation for H channel.'  )
         with columns[2]:
              st.markdown('<p class="font2">' + 'Symmetry & Balance' + '</p>', unsafe_allow_html=True)
-             st.write('Pixel based')
-             check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry' )
-             check_dict['Center of mass'] = st.checkbox('Center of mass', help = 'Distance of the centre of mass from the centre of the image in percent.'  )
-             check_dict['Balance'] = st.checkbox('Balance')
-             st.write('CNN-feature based')
-             check_dict['left-right'] = st.checkbox('left-right')
-             check_dict['up-down'] = st.checkbox('up-down')
-             check_dict['left-right & up-down'] = st.checkbox('left-right & up-down')
+             st.write('**Pixel based**')
+             check_dict['Mirror symmetry'] = st.checkbox('Mirror symmetry' , help = 'left-right Symmetry along the vertical image axis.')
+             check_dict['DCM'] = st.checkbox('DCM', help = 'DCM = **D**eviation of the **C**enter of **M**ass from the image center'  )
+             check_dict['Balance'] = st.checkbox('Balance', help = 'Average symmetry of the vertical, horizontal and diagonal image axes.'  )
+             st.write('**CNN-feature based**')
+             check_dict['left-right'] = st.checkbox('left-right',  help = 'left-right (vertical) Symmetry of CNN layer feature maps.')
+             check_dict['up-down'] = st.checkbox('up-down', help = 'up-down (horizontal) Symmetry of CNN layer feature maps.')
+             check_dict['left-right & up-down'] = st.checkbox('left-right & up-down', help = 'CNN symmetry betwenn the original image and a left-right & up-down flipped image based on CNN layer feature maps.')
         with columns[3]:
              st.markdown('<p class="font2">' + 'Fractality & Self-similarity' + '</p>', unsafe_allow_html=True)
-             st.write('Fractal dimension')
+             st.write('**Fractal dimension**')
              check_dict['2-dimensional'] = st.checkbox('2-dimensional')
              check_dict['3-dimensional'] = st.checkbox('3-dimensional')
-             st.write('Fourier spectrum')
+             st.write('**Fourier spectrum**')
              check_dict['Slope'] = st.checkbox('Slope')
              check_dict['Sigma'] = st.checkbox('Sigma')
-             st.write('Self-similarity')
+             st.write('**Self-similarity**')
              check_dict['PHOG-based'] = st.checkbox('PHOG-based')
              check_dict['CNN-based'] = st.checkbox('CNN-based')
         with columns[4]:
              st.markdown('<p class="font2">' + 'Feature distribution & Entropy' + '</p>', unsafe_allow_html=True)
              check_dict['Anisotropy'] = st.checkbox('Anisotropy')
              check_dict['Homogeneity'] = st.checkbox('Homogeneity')
-             st.write('Edge orientation entropy')
+             st.write('**Edge orientation entropy**')
              check_dict['1st-order'] = st.checkbox('1st-order')
              check_dict['2nd-order'] = st.checkbox('2nd-order')
-             st.write('CNN feature variance')
+             st.write('**CNN feature variance**')
              check_dict['Sparseness'] = st.checkbox('Sparseness')
              check_dict['Variability'] = st.checkbox('Variability')
             
-        commit_sips = st.form_submit_button('Commit selection' , on_click =  selected_SIPs() )
+        commit_sips = st.form_submit_button('**Commit selection**' , on_click =  selected_SIPs() )
             
                 #########################################
                 ###### ADD Parameters for individual SIPs
@@ -259,13 +260,14 @@ if app_mode == 'SIP Calculation':
                         with col2c:
                             weigths3 = int(st.text_input('Weights for level3:', value=1,  help=None,  label_visibility="visible"))
                         
-                submitted = st.form_submit_button("Commit Parameter Selection", on_click=selected_Params())
+                submitted = st.form_submit_button("**Commit Parameter Selection**", on_click=selected_Params())
                 
 
 
-    run = st.button('Run calculation' )
+    run = st.button('**Run calculation**' )
     
     counter_checked_keys = 0
+    placeholder = st.empty()
     if run: 
     
         if len(upload_file) != 0 :
@@ -291,10 +293,15 @@ if app_mode == 'SIP Calculation':
                         
                 #progress_text = "Operation in progress. Please wait."
                 my_bar = st.progress(0)
+                
+                
+                
                 with st.spinner("Operation in progress. Please wait. Download button will appear when finished"):
+                
                     for n in range(len(upload_file)):
-                        print(upload_file[n])
                         
+                        placeholder.text('Calculation for image:   ' + upload_file[n].name)
+
                         file_name = str(upload_file[n].name)
                         if replace_commas:
                             file_name = file_name.replace(",", "_")
@@ -496,7 +503,7 @@ if app_mode == 'SIP Calculation':
                                 res = balance_sips.APB_Score(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 
-                            elif (key == 'Center of mass') and check_dict[key]:
+                            elif (key == 'DCM') and check_dict[key]:
                                 res = balance_sips.DCM_Key(img_gray)
                                 result_txt = result_txt + str(custom_round(res)) + ','
                                 
