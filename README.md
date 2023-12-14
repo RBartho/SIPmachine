@@ -4,6 +4,8 @@ This project contains Python scripts to run a streamlit application in your brow
 
 # Installation instructions
 
+Download all the files from this GitHub repository to your computer. (Download the ZIP file under the green "Code" button.) Then follow the installation instructions for your operating system:
+
 [Linux Installation](docs/InstallationInstructions_Linux.md) \
 [MacOS Installation](docs/InstallationInstructions_MacOS.md)  \
 [Windows Installation](docs/InstallationInstructions_Windows.md) 
