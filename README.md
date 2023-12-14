@@ -12,7 +12,7 @@ Download all the files from this GitHub repository to your computer. (Download t
 
 # Starting the application (after installation)
 
-1. On MacOS and Linux open terminal, on Windows open Anaconda Prompt. Navigate to the downloaded folder containing the SIP_machine.py file.
+1. On MacOS and Linux open a terminal, on Windows open a Anaconda Prompt. Navigate to the downloaded folder containing the SIP_machine.py file.
 
 2. Activate the created Python environment by typing into the terminal
 ```shell
