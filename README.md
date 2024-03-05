@@ -40,3 +40,6 @@ python -m streamlit run SIP_machine.py
 
 # Privacy and security
 All calculations and data transfers of the application take place on your local computer. The browser is only used as an interface. No data is uploaded to the Internet.
+
+# Contributors
+Ralf Bartho, Christoph Redies, Gregor Hayn-Leichsenring, Branka Spehar, Ronald Hübner, George Mather
