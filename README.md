@@ -42,4 +42,9 @@ python -m streamlit run SIP_machine.py
 All calculations and data transfers of the application take place on your local computer. The browser is only used as an interface. No data is uploaded to the Internet.
 
 # Contributors
-Ralf Bartho, Christoph Redies, Gregor Hayn-Leichsenring, Branka Spehar, Ronald Hübner, George Mather
+Ralf Bartho: Toolbox concept, code development, maintenance, bugfixes, 
+Christoph Redies:Toolbox concept, supervision of the project, documentation of image properties
+Gregor Hayn-Leichsenring:  Advice on the development of the toolbox
+Branka Spehar: Provided code to compute image properties
+Ronald Hübner: Provided code to compute image properties
+George Mather: Provided code to compute image properties
