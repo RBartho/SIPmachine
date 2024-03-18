@@ -43,8 +43,8 @@ All calculations and data transfers of the application take place on your local 
 
 # Contributors
 Ralf Bartho: Toolbox concept, code development, maintenance, bugfixes <br />
-Christoph Redies:Toolbox concept, supervision of the project, documentation of image properties <br />
-Gregor Hayn-Leichsenring:  Advice on the development of the toolbox <br />
+Christoph Redies: Toolbox concept, supervision of the project, documentation of image properties <br />
+Gregor Hayn-Leichsenring: Advice on the development of the toolbox <br />
 Branka Spehar: Provided code to compute image properties <br />
 Ronald Hübner: Provided code to compute image properties <br />
 George Mather: Provided code to compute image properties <br />
